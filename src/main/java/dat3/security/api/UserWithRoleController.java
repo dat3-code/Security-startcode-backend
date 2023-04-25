@@ -22,7 +22,7 @@ public class UserWithRoleController {
 
   //Anonymous users can call this. Set DEFAULT_ROLE_TO_ASSIGN to null if no role should be added
   @PostMapping
-  public UserWithRolesResponse addUsersWithRoles(@RequestBody UserWithRolesRequest request) {
+  public UserWithRolesResponse addUserWithRoles(@RequestBody UserWithRolesRequest request) {
     return userWithRolesService.addUserWithRoles (request, DEFAULT_ROLE_TO_ASSIGN);
   }
 
