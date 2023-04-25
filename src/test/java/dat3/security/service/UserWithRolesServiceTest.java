@@ -1,28 +1,23 @@
 package dat3.security.service;
 
-import dat3.security.PasswordEncoderConfig;
-import dat3.security.SecurityConfig;
+import dat3.security.config.PasswordEncoderConfig;
 import dat3.security.TestUtils;
 import dat3.security.dto.UserWithRolesRequest;
 import dat3.security.dto.UserWithRolesResponse;
 import dat3.security.entity.Role;
 import dat3.security.entity.UserWithRoles;
 import dat3.security.repository.UserWithRolesRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+//@Disabled //Comment out this line to run the tests if you are changing anything in the security features
 @DataJpaTest
 @Import(PasswordEncoderConfig.class)
 class UserWithRolesServiceTest {
@@ -71,7 +66,6 @@ class UserWithRolesServiceTest {
     user = userWithRolesService.removeRole("u1", Role.ADMIN);
     assertEquals(0, user.getRoleNames().size());
   }
-
 
   @Test
   void editUserWithRoles() {

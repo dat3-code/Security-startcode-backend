@@ -1,4 +1,4 @@
-package dat3.security;
+package dat3.security.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;

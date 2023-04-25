@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class TestUtils {
 
   public static void setupTestUsers(PasswordEncoder encoder, UserWithRolesRepository userWithRolesRepository){
+    userWithRolesRepository.deleteAll();
     String passwordUsedByAll = encoder.encode("secret");
     UserWithRoles user1 = new UserWithRoles("u1", passwordUsedByAll, "u1@a.dk");
     UserWithRoles user2 = new UserWithRoles("u2", passwordUsedByAll, "u2@a.dk");

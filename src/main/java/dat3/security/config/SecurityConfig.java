@@ -1,4 +1,4 @@
-package dat3.security;
+package dat3.security.config;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
@@ -42,11 +42,6 @@ import java.util.Collections;
 @Configuration
 public class SecurityConfig {
 
-//  @Bean
-//  public PasswordEncoder passwordEncoder() {
-//    return new BCryptPasswordEncoder();
-//  }
-
   @Value("${app.secret-key}")
   private String tokenSecret;
 
@@ -55,9 +50,7 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-            //.cors().and()
             .cors().configurationSource(corsConfigurationSource).and()
-            //.csrf((csrf) -> csrf.ignoringAntMatchers("/api/auth/login"))
             .csrf().disable()  //We can disable csrf, since we are using token based authentication, not cookie based
             .httpBasic(Customizer.withDefaults())
             .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -72,15 +65,22 @@ public class SecurityConfig {
 
     http.authorizeHttpRequests((authorize) -> authorize
             .antMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-            .antMatchers(HttpMethod.POST,"/api/user-with-role").permitAll() //Clients can a user for themself
+            .antMatchers(HttpMethod.POST,"/api/user-with-role").permitAll() //Clients can create a user for themself
 
-
+             //This is for demo purposes only, and should be removed for a real system
             .antMatchers(HttpMethod.GET,"/api/demo/anonymous").permitAll()
+
+
+            .antMatchers(HttpMethod.GET,"/*").permitAll() //Allow index.html
+
             .antMatchers("/error").permitAll()
+
+            //Use this to completely disable security (Will not work if endpoints has been marked with @PreAuthorize)
             //.antMatchers("/", "/**").permitAll()
 
-//                .antMatchers(HttpMethod.GET, "/api/demouser/user-only").hasAuthority("USER")
-//                .antMatchers(HttpMethod.GET, "/api/demouser/admin-only").hasAuthority("ADMIN")
+            //This is for demo purposes only, and should be removed for a real system
+            //.antMatchers(HttpMethod.GET, "/api/demouser/user-only").hasAuthority("USER")
+            // .antMatchers(HttpMethod.GET, "/api/demouser/admin-only").hasAuthority("ADMIN")
              .anyRequest().authenticated());
 
     return http.build();

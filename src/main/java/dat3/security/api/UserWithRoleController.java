@@ -1,6 +1,5 @@
 package dat3.security.api;
 
-
 import dat3.security.dto.UserWithRolesRequest;
 import dat3.security.dto.UserWithRolesResponse;
 import dat3.security.entity.Role;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user-with-role")
 public class UserWithRoleController {
 
-  //Take care with this. If no role is required add null below
+  //Take care with this. If no role is required for new users, add null as the value below
   static Role DEFAULT_ROLE_TO_ASSIGN = Role.USER;
 
   UserWithRolesService userWithRolesService;
@@ -21,7 +20,7 @@ public class UserWithRoleController {
     this.userWithRolesService = userWithRolesService;
   }
 
-  //Anonymous users can call this
+  //Anonymous users can call this. Set DEFAULT_ROLE_TO_ASSIGN to null if no role should be added
   @PostMapping
   public UserWithRolesResponse addUsersWithRoles(@RequestBody UserWithRolesRequest request) {
     return userWithRolesService.addUserWithRoles (request, DEFAULT_ROLE_TO_ASSIGN);

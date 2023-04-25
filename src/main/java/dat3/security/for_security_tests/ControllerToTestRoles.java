@@ -22,9 +22,13 @@ class TestResponse {
         this.message = message;
     }
 }
+
+/** Controller meant solely to test the authorization of the roles.
+ * This controller is only loaded when the "test" profile is active, so it does not interfere with the real controller
+ * */
 @RestController
 @RequestMapping("/api/security-tests")
-@Profile("test")  //This ensures that this controller is only loaded when the "test" profile is active, so it does not interfere with the real controller
+@Profile("test")
 public class ControllerToTestRoles {
 
     UserWithRolesService userWithRolesService;

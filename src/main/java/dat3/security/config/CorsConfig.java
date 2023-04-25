@@ -1,4 +1,4 @@
-package dat3.security;
+package dat3.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +10,7 @@ import java.util.Arrays;
 @Configuration
 public class CorsConfig {
 
-    //When you know the domanin name for your client, add it below before deploayment
+    //When you know the domain name for your client, add it below before deployment
     private static final String[] ALLOWED_ORIGINS = new String[] {
             "*",
             "https://example.com/",

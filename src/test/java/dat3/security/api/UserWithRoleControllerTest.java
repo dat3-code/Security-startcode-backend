@@ -1,7 +1,7 @@
 package dat3.security.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dat3.security.PasswordEncoderConfig;
+import dat3.security.config.PasswordEncoderConfig;
 import dat3.security.TestUtils;
 import dat3.security.dto.LoginRequest;
 import dat3.security.dto.LoginResponse;
@@ -9,15 +9,14 @@ import dat3.security.dto.UserWithRolesRequest;
 import dat3.security.repository.UserWithRolesRepository;
 import dat3.security.service.UserWithRolesService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -30,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.hasSize;
 
-
+//@Disabled //Comment out this line to run the tests if you are changing anything in the security features
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -38,28 +37,17 @@ import static org.hamcrest.Matchers.hasSize;
 @Transactional
 class UserWithRoleControllerTest {
 
-
   @Autowired
   MockMvc mockMvc;
-
   @Autowired
   UserWithRolesRepository userWithRolesRepository;
-
   @Autowired
   UserWithRolesService userWithRolesService;
-
-  String adminToken;
-
   @Autowired
   PasswordEncoder passwordEncoder;
 
-  @Autowired
-  JwtEncoder encoder;
-
-
-  @Autowired
-  AuthenticationManager authenticationManager;
-
+  String adminToken;
+  String userToken;
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   private boolean dataInitialized = false;
@@ -70,6 +58,7 @@ class UserWithRoleControllerTest {
     if (!dataInitialized) {
       userWithRolesRepository.deleteAll();
       TestUtils.setupTestUsers(passwordEncoder, userWithRolesRepository);
+      userToken = loginAndGetToken("u2", "secret");
       adminToken = loginAndGetToken("u3", "secret");
       dataInitialized = true;
     }
@@ -129,6 +118,14 @@ class UserWithRoleControllerTest {
             .andExpect(jsonPath("$.userName").value("u4"))
             .andExpect(jsonPath("$.roleNames", hasSize(1)))
             .andExpect(jsonPath("$.roleNames", contains("ADMIN")));
+  }
+
+  @Test
+  void addRoleFailsWithWrongRole() throws Exception {
+    mockMvc.perform(patch("/api/user-with-role/add-role/u2/admin")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + userToken)
+                    .accept("application/json"))
+            .andExpect(status().isForbidden());
   }
 
   @Test

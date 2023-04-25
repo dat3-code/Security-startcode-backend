@@ -32,29 +32,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-//@Disabled  //Comment out this line to run the tests if your are changing anything in the security features
+//@Disabled  //Comment out this line to run the tests if you are changing anything in the security features
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
-class SecurityFeaturesTest {
+public class AuthorizationTest {
 
   @Autowired
   MockMvc mockMvc;
-
   @Autowired
   UserWithRolesRepository userWithRolesRepository;
-
-  String token;
-
   @Autowired
   PasswordEncoder passwordEncoder;
 
-  @Autowired
-  JwtEncoder encoder;
-
-  @Autowired
-  AuthenticationManager authenticationManager;
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -89,39 +80,6 @@ class SecurityFeaturesTest {
     return loginResponse.getToken();
   }
 
-  @Test
-  void login() throws Exception {
-    LoginRequest loginRequest = new LoginRequest("u1", "secret");
-    mockMvc.perform(post("/api/auth/login")
-                    .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(loginRequest)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.username").value("u1"))
-            .andExpect(result -> {
-              //Not a bulletproof test, but acceptable. First part will (should) always be the same. A token must always contain two dots.
-              String token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
-              assertTrue(token.startsWith("eyJhbGciOiJIUzI1NiJ9"));
-              assertTrue(token.chars().filter(ch -> ch == '.').count() == 2);
-            });
-  }
-
-  @Test
-  void loginWithWrongPassword() throws Exception {
-    LoginRequest loginRequest = new LoginRequest("u1", "wrong");
-    mockMvc.perform(post("/api/auth/login")
-                    .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(loginRequest)))
-            .andExpect(status().isUnauthorized());
-  }
-  @Test
-  void loginWithWrongUsername() throws Exception {
-    LoginRequest loginRequest = new LoginRequest("u111111", "wrong");
-    mockMvc.perform(post("/api/auth/login")
-                    .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(loginRequest)))
-            .andExpect(status().isUnauthorized());
-  }
-
 
   @Test
   void testRolesAdmin() throws Exception {
@@ -133,7 +91,7 @@ class SecurityFeaturesTest {
             .andExpect(jsonPath("$.message").value("Admin"));
   }
   @Test
-  void testRolesAdminWrongRole() throws Exception {
+  void testEndpointAdminWrongRole() throws Exception {
     mockMvc.perform(get("/api/security-tests/admin")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + userJwtToken)
                     .contentType("application/json"))

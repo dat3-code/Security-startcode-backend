@@ -1,6 +1,6 @@
 package dat3.security.api;
 
-import dat3.security.UserDetailsServiceImp;
+import dat3.security.service.UserDetailsServiceImp;
 import dat3.security.dto.LoginRequest;
 import dat3.security.dto.LoginResponse;
 import dat3.security.entity.UserWithRoles;
@@ -33,11 +33,10 @@ public class AuthenticationController {
   @Value("${app.token-expiration}")
   private long tokenExpiration;
 
-  private  AuthenticationManager authenticationManager;
+  private AuthenticationManager authenticationManager;
 
   JwtEncoder encoder;
-
-   public AuthenticationController(AuthenticationManager authenticationManager, JwtEncoder encoder) {
+  public AuthenticationController(AuthenticationManager authenticationManager, JwtEncoder encoder) {
     this.authenticationManager = authenticationManager;
     this.encoder = encoder;
   }
@@ -45,9 +44,9 @@ public class AuthenticationController {
   @PostMapping("login")
   public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
 
-     try {
-       UsernamePasswordAuthenticationToken uat = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
-       Authentication authentication = authenticationManager.authenticate(uat);
+    try {
+      UsernamePasswordAuthenticationToken uat = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
+      Authentication authentication = authenticationManager.authenticate(uat);
 
       UserWithRoles user = (UserWithRoles) authentication.getPrincipal();
       Instant now = Instant.now();
@@ -61,19 +60,19 @@ public class AuthenticationController {
               .issuedAt(now)
               .expiresAt(now.plusSeconds(tokenExpiration))
               .subject(user.getUsername())
-              .claim("roles",scope)
+              .claim("roles", scope)
               .build();
       JwsHeader jwsHeader = JwsHeader.with(() -> "HS256").build();
       String token = encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
 
 
-      List<String> roles = user.getRoles().stream().map(role->role.toString()).collect(Collectors.toList());
+      List<String> roles = user.getRoles().stream().map(role -> role.toString()).collect(Collectors.toList());
       return ResponseEntity.ok()
-              .body(new LoginResponse(user.getUsername(),token,roles));
+              .body(new LoginResponse(user.getUsername(), token, roles));
 
-     } catch (BadCredentialsException e) {
-       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, UserDetailsServiceImp.WRONG_USERNAME_OR_PASSWORD);
-     }
+    } catch (BadCredentialsException e) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, UserDetailsServiceImp.WRONG_USERNAME_OR_PASSWORD);
+    }
 
   }
 }
