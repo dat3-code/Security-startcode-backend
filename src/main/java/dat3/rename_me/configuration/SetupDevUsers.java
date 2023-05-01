@@ -8,43 +8,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import dat3.security.repository.UserWithRolesRepository;
 
+import static dat3.security.config.UsersForDevelopmentOnly.setupUserWithRoleUsers;
+
 @Controller
 public class SetupDevUsers implements ApplicationRunner {
 
     UserWithRolesRepository userWithRolesRepository;
     PasswordEncoder passwordEncoder;
-    String passwordUsedByAll;
 
     public SetupDevUsers(UserWithRolesRepository userWithRolesRepository, PasswordEncoder passwordEncoder) {
         this.userWithRolesRepository = userWithRolesRepository;
         this.passwordEncoder = passwordEncoder;
-        passwordUsedByAll = "test12";
     }
 
+    //Remove me before production
     @Override
     public void run(ApplicationArguments args) {
-        setupUserWithRoleUsers();
-    }
-
-    /*****************************************************************************************
-     NEVER  COMMIT/PUSH CODE WITH DEFAULT CREDENTIALS FOR REAL
-     iT'S ONE OF THE TOP SECURITY FLAWS YOU CAN DO
-     *****************************************************************************************/
-    private void setupUserWithRoleUsers() {
-        System.out.println("******************************************************************************");
-        System.out.println("******* NEVER  COMMIT/PUSH CODE WITH DEFAULT CREDENTIALS FOR REAL ************");
-        System.out.println("******* REMOVE THIS BEFORE DEPLOYMENT, AND SETUP DEFAULT USERS DIRECTLY  *****");
-        System.out.println("**** ** ON YOUR REMOTE DATABASE                 ******************************");
-        System.out.println("******************************************************************************");
-        UserWithRoles user1 = new UserWithRoles("user1", passwordEncoder.encode(passwordUsedByAll), "user1@a.dk");
-        UserWithRoles user2 = new UserWithRoles("user2", passwordEncoder.encode(passwordUsedByAll), "user2@a.dk");
-        UserWithRoles user3 = new UserWithRoles("user3", passwordEncoder.encode(passwordUsedByAll), "user3@a.dk");
-        user1.addRole(Role.USER);
-        user1.addRole(Role.ADMIN);
-        user2.addRole(Role.USER);
-        user3.addRole(Role.ADMIN);
-        userWithRolesRepository.save(user1);
-        userWithRolesRepository.save(user2);
-        userWithRolesRepository.save(user3);
+        setupUserWithRoleUsers(userWithRolesRepository, passwordEncoder);
     }
 }
