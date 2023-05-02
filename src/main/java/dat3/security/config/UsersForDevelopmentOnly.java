@@ -16,7 +16,7 @@ public class UsersForDevelopmentOnly {
    NEVER  COMMIT/PUSH CODE WITH DEFAULT CREDENTIALS FOR REAL
    iT'S ONE OF THE TOP SERIOUS SECURITY FLAWS YOU CAN DO
 
-   If you see these lines in the log-outputs on Azure, forget whatever had your attention and fix this problem
+   If you see these lines in the log-outputs on Azure, forget whatever had your attention on, AND FIX THIS PROBLEM
 
    *****************************************************************************************/
   public static void setupUserWithRoleUsers(UserWithRolesRepository userWithRolesRepository, PasswordEncoder passwordEncoder) {
