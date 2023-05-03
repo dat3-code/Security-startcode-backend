@@ -64,23 +64,23 @@ public class SecurityConfig {
             .jwtAuthenticationConverter(authenticationConverter());
 
     http.authorizeHttpRequests((authorize) -> authorize
-            .antMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-            .antMatchers(HttpMethod.POST,"/api/user-with-role").permitAll() //Clients can create a user for themself
+            .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+            .requestMatchers(HttpMethod.POST,"/api/user-with-role").permitAll() //Clients can create a user for themself
 
              //This is for demo purposes only, and should be removed for a real system
-            .antMatchers(HttpMethod.GET,"/api/demo/anonymous").permitAll()
+            .requestMatchers(HttpMethod.GET,"/api/demo/anonymous").permitAll()
 
 
-            .antMatchers(HttpMethod.GET,"/*").permitAll() //Allow index.html
+            .requestMatchers(HttpMethod.GET,"/*").permitAll() //Allow index.html
 
-            .antMatchers("/error").permitAll()
+            .requestMatchers("/error").permitAll()
 
             //Use this to completely disable security (Will not work if endpoints has been marked with @PreAuthorize)
-            //.antMatchers("/", "/**").permitAll()
+            //.requestMatchers("/", "/**").permitAll()
 
             //This is for demo purposes only, and should be removed for a real system
-            //.antMatchers(HttpMethod.GET, "/api/demouser/user-only").hasAuthority("USER")
-            // .antMatchers(HttpMethod.GET, "/api/demouser/admin-only").hasAuthority("ADMIN")
+            //.requestMatchers(HttpMethod.GET, "/api/demouser/user-only").hasAuthority("USER")
+            // .requestMatchers(HttpMethod.GET, "/api/demouser/admin-only").hasAuthority("ADMIN")
              .anyRequest().authenticated());
 
     return http.build();
