@@ -5,8 +5,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <!-- Change version number to newest 2.7.x before you start -->
-        <version>3.0.6</version>
+        <!-- Use the latest 3.0.x version -->
+        <version>[3.0.0,3.1.0)</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <!--Often a reversed company domain name, here you could use something like below -->
