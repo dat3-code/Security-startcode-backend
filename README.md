@@ -8,6 +8,11 @@ If cloned delete the hidden .git folder and do a new git init
 Se this [short video](https://www.youtube.com/watch?v=aISFmtX-vfA)
 for how to use the code for the cars'R' Us project and future projects this semester where you need Security
 
+### Info
+
+If you use this as the very start of your own projects, delete the security-zipped folder after cloning.
+This files are meant only to include this project into an EXISTING project, as described elsewere
+
 ### Short text-version of what the video above goes through
 - Clone (prefered)/fork the project, and do what it takes to create you own git-folder, and after that, git-repo
 - Create the MySQL database you plan to use for the project on your local MySQL instance
