@@ -71,8 +71,8 @@ public class SecurityConfig {
              //This is for demo purposes only, and should be removed for a real system
             .requestMatchers(HttpMethod.GET,"/api/demo/anonymous").permitAll()
 
-
-            .requestMatchers(HttpMethod.GET,"/*").permitAll() //Allow index.html
+            //Allow index.html and everything else on root level. So make sure to put all your endpoints under /api
+            .requestMatchers(HttpMethod.GET,"/*").permitAll()
 
             .requestMatchers("/error").permitAll()
 
