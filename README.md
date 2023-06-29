@@ -11,7 +11,7 @@ for how to use the code for the cars'R' Us project and future projects this seme
 ### Info
 
 If you use this as the very start of your own projects, delete the security-zipped folder after cloning.
-This files are meant only to include this project into an EXISTING project, as described in the supplementing Google Doc
+These files are meant to include this project into an EXISTING project, as described in the supplementing Google Doc
 
 ### Short text-version of what the video above goes through
 - Clone (prefered)/fork the project, and do what it takes to create you own git-folder, and after that, git-repo
