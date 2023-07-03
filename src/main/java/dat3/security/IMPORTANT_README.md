@@ -9,3 +9,5 @@ Unless you absolutely know what you are doing, do not modify any code in this pa
 - config.CorsConfig.java
 
 #### If you change anything in the security module, make sure to enable the security tests
+You can do this for your maven builds via the maven-surefire-plugin, in your pom-file
+

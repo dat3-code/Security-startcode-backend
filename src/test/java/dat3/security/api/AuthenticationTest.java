@@ -6,7 +6,7 @@ import dat3.security.TestUtils;
 import dat3.security.dto.LoginRequest;
 import dat3.security.repository.UserWithRolesRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,13 +16,15 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@Disabled  //Comment out this line to run the tests if you are changing anything in the security features
+//You can enable/disable these tests in you maven builds via the maven-surefire-plugin, in your pom-file
+@Tag("DisabledSecurityTest")
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")  //Ensures that we use the in-memory database

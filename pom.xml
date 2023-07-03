@@ -88,6 +88,16 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+                <configuration>
+                    <!-- Comment in or out to disable/enable Security tests from your maven build -->
+                    <!--<excludedGroups>DisabledSecurityTest</excludedGroups>-->
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

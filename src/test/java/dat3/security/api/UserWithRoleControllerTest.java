@@ -1,15 +1,15 @@
 package dat3.security.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dat3.security.config.PasswordEncoderConfig;
 import dat3.security.TestUtils;
+import dat3.security.config.PasswordEncoderConfig;
 import dat3.security.dto.LoginRequest;
 import dat3.security.dto.LoginResponse;
 import dat3.security.dto.UserWithRolesRequest;
 import dat3.security.repository.UserWithRolesRepository;
 import dat3.security.service.UserWithRolesService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,13 +23,14 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.Matchers.hasSize;
 
-//@Disabled //Comment out this line to run the tests if you are changing anything in the security features
+//You can enable/disable these tests in you maven builds via the maven-surefire-plugin, in your pom-file
+@Tag("DisabledSecurityTest")
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
