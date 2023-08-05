@@ -23,7 +23,9 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -41,30 +43,36 @@ public class SecurityConfig {
   @Autowired
   CorsConfigurationSource corsConfigurationSource;
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+    MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
     http
-            .cors().configurationSource(corsConfigurationSource).and()
-            .csrf().disable()  //We can disable csrf, since we are using token based authentication, not cookie based
+            .cors(Customizer.withDefaults())
+            .csrf(csrf -> csrf.disable())  //We can disable csrf, since we are using token based authentication, not cookie based
             .httpBasic(Customizer.withDefaults())
             .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .oauth2ResourceServer()
+            .oauth2ResourceServer((oauth2ResourceServer) ->
+                    oauth2ResourceServer
+                            .jwt((jwt)-> jwt.decoder(jwtDecoder())
+                                    .jwtAuthenticationConverter(authenticationConverter())
+                            )
+
             //REF: https://mflash.dev/post/2021/01/19/error-handling-for-spring-security-resource-server/
             .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint())
-            .accessDeniedHandler(new CustomOAuth2AccessDeniedHandler())
-            .jwt()
-            .jwtAuthenticationConverter(authenticationConverter());
+            .accessDeniedHandler(new CustomOAuth2AccessDeniedHandler()));
+
 
     http.authorizeHttpRequests((authorize) -> authorize
-            .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-            .requestMatchers(HttpMethod.POST,"/api/user-with-role").permitAll() //Clients can create a user for themself
+            //.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST,"/api/auth/login")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST,"/api/user-with-role")).permitAll() //Clients can create a user for themself
 
              //This is for demo purposes only, and should be removed for a real system
-            .requestMatchers(HttpMethod.GET,"/api/demo/anonymous").permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET,"/api/demo/anonymous")).permitAll()
 
             //Allow index.html and everything else on root level. So make sure to put all your endpoints under /api
-            .requestMatchers(HttpMethod.GET,"/*").permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET,"/*")).permitAll()
 
-            .requestMatchers("/error").permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/error")).permitAll()
 
             //Use this to completely disable security (Will not work if endpoints has been marked with @PreAuthorize)
             //.requestMatchers("/", "/**").permitAll()

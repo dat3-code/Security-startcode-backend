@@ -5,8 +5,11 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <!-- Use the latest 3.0.x version -->
-        <version>[3.0.0,3.1.0)</version>
+        <!-- Use the latest 3.1.x version -->
+        <!--This should be safe, since breaking changes should only happen in major releases
+        3.0.8 to 3.0.9 however did introduce several breaking changes
+        If this code fails, right after being cloned is was sast tested with 3.1.2 -->
+        <version>[3.1.0,3.1.9]</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <!--Often a reversed company domain name, here you could use something like below -->
