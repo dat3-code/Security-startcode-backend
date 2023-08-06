@@ -46,7 +46,7 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
     MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
     http
-            .cors(Customizer.withDefaults())
+            .cors(Customizer.withDefaults()) //Will use the CorsConfigurationSource bean declared in CorsConfig.java
             .csrf(csrf -> csrf.disable())  //We can disable csrf, since we are using token based authentication, not cookie based
             .httpBasic(Customizer.withDefaults())
             .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -62,14 +62,13 @@ public class SecurityConfig {
 
 
     http.authorizeHttpRequests((authorize) -> authorize
-            //.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST,"/api/auth/login")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST,"/api/user-with-role")).permitAll() //Clients can create a user for themself
 
              //This is for demo purposes only, and should be removed for a real system
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET,"/api/demo/anonymous")).permitAll()
 
-            //Allow index.html and everything else on root level. So make sure to put all your endpoints under /api
+            //Allow index.html and everything else on root level. So make sure to put ALL your endpoints under /api
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET,"/*")).permitAll()
 
             .requestMatchers(mvcMatcherBuilder.pattern("/error")).permitAll()
