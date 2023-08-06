@@ -24,7 +24,6 @@ public class CorsConfig {
         //Use the line below instead, if you want to allow specific headers only
         //configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With"));
         configuration.setAllowedOriginPatterns(Arrays.asList(ALLOWED_ORIGINS));
-        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
