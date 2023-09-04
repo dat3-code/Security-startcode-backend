@@ -1,4 +1,4 @@
-package dat3.security.error;
+package dat3.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

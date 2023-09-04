@@ -2,8 +2,6 @@ package dat3.security.config;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.proc.SecurityContext;
-import dat3.security.error.CustomOAuth2AccessDeniedHandler;
-import dat3.security.error.CustomOAuth2AuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -1,13 +1,16 @@
 package dat3.security.for_security_tests;
 
-import dat3.security.service.UserWithRolesService;
+import dat3.security.userWithRoles.entity.UserWithRoles;
+import dat3.security.userWithRoles.UserWithRolesRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 
@@ -31,31 +34,39 @@ class TestResponse {
 @Profile("test")
 public class ControllerToTestRoles {
 
-    UserWithRolesService userWithRolesService;
+    UserWithRolesRepository userWithRolesRepository;
 
-    public ControllerToTestRoles(UserWithRolesService userWithRolesService) {
-        this.userWithRolesService = userWithRolesService;
+    public ControllerToTestRoles(UserWithRolesRepository userWithRolesRepository) {
+        this.userWithRolesRepository = userWithRolesRepository;
+    }
+    //No need for a service, as we only need to test the roles
+    UserWithRoles getUserForTest(String username) {
+        return userWithRolesRepository.findById(username).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/admin")
     public TestResponse getAdminUser(Principal principal) {
-        return new TestResponse(userWithRolesService.getUserWithRoles(principal.getName()).getUserName(),"Admin");
+        String authenticatedUser = principal.getName();
+        return new TestResponse(getUserForTest(authenticatedUser).getUsername(),"Admin");
     }
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/user")
     public TestResponse getUserUser(Principal principal) {
-        return new TestResponse(userWithRolesService.getUserWithRoles(principal.getName()).getUserName(),"User");
+        String authenticatedUser = principal.getName();
+        return new TestResponse(getUserForTest(authenticatedUser).getUsername(),"User");
     }
 
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     @GetMapping("/useradmin")
     public TestResponse getUserOrAdminUser(Principal principal) {
-        return new TestResponse(userWithRolesService.getUserWithRoles(principal.getName()).getUserName(),"User and/or Amin");
+        String authenticatedUser = principal.getName();
+        return new TestResponse(getUserForTest(authenticatedUser).getUsername(),"User and/or Amin");
     }
 
     @GetMapping("/authenticated")
     public TestResponse getAuthenticatedUser(Principal principal) {
-        return new TestResponse(userWithRolesService.getUserWithRoles(principal.getName()).getUserName(),"Authenticated user");
+        String authenticatedUser = principal.getName();
+        return new TestResponse(getUserForTest(authenticatedUser).getUsername(),"Authenticated user");
     }
 }

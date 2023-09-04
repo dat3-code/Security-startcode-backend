@@ -1,4 +1,4 @@
-package dat3.security.entity;
+package dat3.security.userWithRoles.entity;
 
 /*
 Add required roles for your project to this enum

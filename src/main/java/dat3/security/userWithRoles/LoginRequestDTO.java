@@ -1,4 +1,4 @@
-package dat3.security.dto;
+package dat3.security.userWithRoles;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequest{
+public class LoginRequestDTO {
    String username;
    String password;
 }

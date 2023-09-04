@@ -1,12 +1,12 @@
 package dat3.rename_me.configuration;
 
-import dat3.security.entity.Role;
-import dat3.security.entity.UserWithRoles;
+import dat3.security.userWithRoles.entity.Role;
+import dat3.security.userWithRoles.entity.UserWithRoles;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import dat3.security.repository.UserWithRolesRepository;
+import dat3.security.userWithRoles.UserWithRolesRepository;
 
 @Controller
 public class SetupDevUsers implements ApplicationRunner {

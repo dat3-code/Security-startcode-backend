@@ -1,8 +1,8 @@
 package dat3.security;
 
-import dat3.security.entity.Role;
-import dat3.security.entity.UserWithRoles;
-import dat3.security.repository.UserWithRolesRepository;
+import dat3.security.userWithRoles.entity.Role;
+import dat3.security.userWithRoles.entity.UserWithRoles;
+import dat3.security.userWithRoles.UserWithRolesRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class TestUtils {

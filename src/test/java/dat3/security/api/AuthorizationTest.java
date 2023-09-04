@@ -3,9 +3,9 @@ package dat3.security.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dat3.security.TestUtils;
-import dat3.security.dto.LoginRequest;
-import dat3.security.dto.LoginResponse;
-import dat3.security.repository.UserWithRolesRepository;
+import dat3.security.userWithRoles.LoginRequestDTO;
+import dat3.security.userWithRoles.LoginResponseDTO;
+import dat3.security.userWithRoles.UserWithRolesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -63,14 +63,14 @@ public class AuthorizationTest {
   }
 
   String loginAndGetToken(String user,String pw) throws Exception {
-    LoginRequest loginRequest = new LoginRequest(user,pw);
+    LoginRequestDTO loginRequestDTO = new LoginRequestDTO(user,pw);
     MvcResult response = mockMvc.perform(post("/api/auth/login")
                     .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(loginRequest)))
+                    .content(objectMapper.writeValueAsString(loginRequestDTO)))
             .andExpect(status().isOk())
             .andReturn();
-    LoginResponse loginResponse = objectMapper.readValue(response.getResponse().getContentAsString(), LoginResponse.class);
-    return loginResponse.getToken();
+    LoginResponseDTO loginResponseDTO = objectMapper.readValue(response.getResponse().getContentAsString(), LoginResponseDTO.class);
+    return loginResponseDTO.getToken();
   }
 
 

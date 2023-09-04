@@ -1,6 +1,6 @@
-package dat3.security.repository;
+package dat3.security.userWithRoles;
 
-import dat3.security.entity.UserWithRoles;
+import dat3.security.userWithRoles.entity.UserWithRoles;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface

@@ -3,8 +3,8 @@ package dat3.security.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import dat3.security.TestUtils;
-import dat3.security.dto.LoginRequest;
-import dat3.security.repository.UserWithRolesRepository;
+import dat3.security.userWithRoles.LoginRequestDTO;
+import dat3.security.userWithRoles.UserWithRolesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -51,10 +51,10 @@ public class AuthenticationTest {
 
   @Test
   void login() throws Exception {
-    LoginRequest loginRequest = new LoginRequest("u1", "secret");
+    LoginRequestDTO loginRequestDTO = new LoginRequestDTO("u1", "secret");
     mockMvc.perform(post("/api/auth/login")
                     .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(loginRequest)))
+                    .content(objectMapper.writeValueAsString(loginRequestDTO)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.username").value("u1"))
             .andExpect(jsonPath("$.roles", hasSize(2)))
@@ -69,19 +69,19 @@ public class AuthenticationTest {
 
   @Test
   void loginWithWrongPassword() throws Exception {
-    LoginRequest loginRequest = new LoginRequest("u1", "wrong");
+    LoginRequestDTO loginRequestDTO = new LoginRequestDTO("u1", "wrong");
     mockMvc.perform(post("/api/auth/login")
                     .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(loginRequest)))
+                    .content(objectMapper.writeValueAsString(loginRequestDTO)))
             .andExpect(status().isUnauthorized());
 
   }
   @Test
   void loginWithWrongUsername() throws Exception {
-    LoginRequest loginRequest = new LoginRequest("u111111", "wrong");
+    LoginRequestDTO loginRequestDTO = new LoginRequestDTO("u111111", "wrong");
     mockMvc.perform(post("/api/auth/login")
                     .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(loginRequest)))
+                    .content(objectMapper.writeValueAsString(loginRequestDTO)))
             .andExpect(status().isUnauthorized());
   }
 }

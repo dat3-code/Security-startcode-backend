@@ -1,8 +1,11 @@
-package dat3.security.entity;
+package dat3.security.userWithRoles.entity;
 
 
-import dat3.security.dto.UserWithRolesRequest;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -10,7 +13,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,15 +57,6 @@ public class UserWithRoles implements UserDetails {
   public UserWithRoles() {
   }
 
-  // We will use this constructor when/if users must be created via an HTTP-request
-  public UserWithRoles(UserWithRolesRequest body) {
-    this.username = body.getUsername();
-    if (password.length() < 60) {
-      throw new IllegalArgumentException("Password must be encoded with bcrypt");
-    }
-    this.password = body.getPassword();
-    this.email = body.getEmail();
-  }
 
   public UserWithRoles(String user, String password, String email) {
     this.username = user;

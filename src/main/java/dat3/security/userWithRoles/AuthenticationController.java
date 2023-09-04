@@ -1,9 +1,6 @@
-package dat3.security.api;
+package dat3.security.userWithRoles;
 
-import dat3.security.service.UserDetailsServiceImp;
-import dat3.security.dto.LoginRequest;
-import dat3.security.dto.LoginResponse;
-import dat3.security.entity.UserWithRoles;
+import dat3.security.userWithRoles.entity.UserWithRoles;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +40,7 @@ public class AuthenticationController {
   }
 
   @PostMapping("login")
-  public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+  public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO request) {
 
     try {
       UsernamePasswordAuthenticationToken uat = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
@@ -69,7 +66,7 @@ public class AuthenticationController {
 
       List<String> roles = user.getRoles().stream().map(role -> role.toString()).collect(Collectors.toList());
       return ResponseEntity.ok()
-              .body(new LoginResponse(user.getUsername(), token, roles));
+              .body(new LoginResponseDTO(user.getUsername(), token, roles));
 
     } catch (BadCredentialsException e) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, UserDetailsServiceImp.WRONG_USERNAME_OR_PASSWORD);
