@@ -1,7 +1,6 @@
 package dat3.security.service;
 
 import dat3.security.TestUtils;
-import dat3.security.config.PasswordEncoderConfig;
 import dat3.security.dto.UserWithRolesRequest;
 import dat3.security.dto.UserWithRolesResponse;
 import dat3.security.entity.Role;
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,13 +18,15 @@ import static org.junit.jupiter.api.Assertions.*;
 //You can enable/disable these tests in you maven builds via the maven-surefire-plugin, in your pom-file
 @Tag("DisabledSecurityTest")
 @DataJpaTest
-@Import(PasswordEncoderConfig.class)
+//@Import(PasswordEncoderConfig.class)
 class UserWithRolesServiceTest {
-
-  UserWithRolesService userWithRolesService;
 
   @Autowired
   PasswordEncoder passwordEncoder;
+
+  UserWithRolesService userWithRolesService;
+
+
 
   @Autowired
   UserWithRolesRepository userWithRolesRepository;
