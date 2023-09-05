@@ -43,10 +43,10 @@ public class UserWithRoles implements UserDetails {
   private boolean enabled = true;
 
   @CreationTimestamp
-  private LocalDateTime created;
+  protected LocalDateTime created;
 
   @UpdateTimestamp
-  private LocalDateTime edited;
+  protected LocalDateTime edited;
 
   @Enumerated(EnumType.STRING)
   @Column(columnDefinition = "ENUM('USER','ADMIN')")
