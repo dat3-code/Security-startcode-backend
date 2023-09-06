@@ -60,7 +60,6 @@ public class SecurityConfig {
                             .jwt((jwt) -> jwt.decoder(jwtDecoder())
                                     .jwtAuthenticationConverter(authenticationConverter())
                             )
-                            //REF: https://mflash.dev/post/2021/01/19/error-handling-for-spring-security-resource-server/
                             .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint()));
     http.authorizeHttpRequests((authorize) -> authorize
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/auth/login")).permitAll()
@@ -70,7 +69,7 @@ public class SecurityConfig {
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/demo/anonymous")).permitAll()
 
             //Allow index.html and everything else on root level. So make sure to put ALL your endpoints under /api
-            //.requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET,"/*")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET,"/*")).permitAll()
 
             .requestMatchers(mvcMatcherBuilder.pattern("/error")).permitAll()
 
