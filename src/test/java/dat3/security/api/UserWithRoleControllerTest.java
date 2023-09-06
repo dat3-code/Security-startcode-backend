@@ -53,10 +53,10 @@ class UserWithRoleControllerTest {
 
   @BeforeEach
   void setUp() throws Exception {
-    userWithRolesService = new UserWithRolesService(userWithRolesRepository, passwordEncoder);
+    userWithRolesService = new UserWithRolesService(userWithRolesRepository);
     if (!dataInitialized) {
       userWithRolesRepository.deleteAll();
-      TestUtils.setupTestUsers(passwordEncoder, userWithRolesRepository);
+      TestUtils.setupTestUsers(userWithRolesRepository);
       userToken = loginAndGetToken("u2", "secret");
       adminToken = loginAndGetToken("u3", "secret");
       dataInitialized = true;

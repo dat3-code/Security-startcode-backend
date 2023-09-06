@@ -43,10 +43,10 @@ public class SetupDevUsers implements ApplicationRunner {
         System.out.println("**** ** ON YOUR REMOTE DATABASE                 ******************************");
         System.out.println();
         System.out.println("******************************************************************************");
-        UserWithRoles user1 = new UserWithRoles("user1", passwordEncoder.encode(passwordUsedByAll), "user1@a.dk");
-        UserWithRoles user2 = new UserWithRoles("user2", passwordEncoder.encode(passwordUsedByAll), "user2@a.dk");
-        UserWithRoles user3 = new UserWithRoles("user3", passwordEncoder.encode(passwordUsedByAll), "user3@a.dk");
-        UserWithRoles user4 = new UserWithRoles("user4", passwordEncoder.encode(passwordUsedByAll), "user4@a.dk");
+        UserWithRoles user1 = new UserWithRoles("user1", passwordUsedByAll, "user1@a.dk");
+        UserWithRoles user2 = new UserWithRoles("user2", passwordUsedByAll, "user2@a.dk");
+        UserWithRoles user3 = new UserWithRoles("user3", passwordUsedByAll, "user3@a.dk");
+        UserWithRoles user4 = new UserWithRoles("user4", passwordUsedByAll, "user4@a.dk");
         user1.addRole(Role.USER);
         user1.addRole(Role.ADMIN);
         user2.addRole(Role.USER);

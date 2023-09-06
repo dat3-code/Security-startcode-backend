@@ -3,13 +3,12 @@ package dat3.security;
 import dat3.security.entity.Role;
 import dat3.security.entity.UserWithRoles;
 import dat3.security.repository.UserWithRolesRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class TestUtils {
 
-  public static void setupTestUsers(PasswordEncoder encoder, UserWithRolesRepository userWithRolesRepository){
+  public static void setupTestUsers( UserWithRolesRepository userWithRolesRepository){
     userWithRolesRepository.deleteAll();
-    String passwordUsedByAll = encoder.encode("secret");
+    String passwordUsedByAll = "secret";
     UserWithRoles user1 = new UserWithRoles("u1", passwordUsedByAll, "u1@a.dk");
     UserWithRoles user2 = new UserWithRoles("u2", passwordUsedByAll, "u2@a.dk");
     UserWithRoles user3 = new UserWithRoles("u3", passwordUsedByAll, "u3@a.dk");

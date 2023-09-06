@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +34,7 @@ public class AuthenticationTest {
   MockMvc mockMvc;
   @Autowired
   UserWithRolesRepository userWithRolesRepository;
-  @Autowired
-  PasswordEncoder passwordEncoder;
+
 
   private final ObjectMapper objectMapper = new ObjectMapper();
   public boolean isDataInitialized = false;
@@ -45,7 +43,7 @@ public class AuthenticationTest {
   void setUp() throws Exception {
     if(!isDataInitialized) {
       isDataInitialized = true;
-      TestUtils.setupTestUsers(passwordEncoder,userWithRolesRepository);
+      TestUtils.setupTestUsers(userWithRolesRepository);
     }
   }
 

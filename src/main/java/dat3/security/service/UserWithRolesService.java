@@ -3,22 +3,19 @@ package dat3.security.service;
 import dat3.security.dto.UserWithRolesRequest;
 import dat3.security.dto.UserWithRolesResponse;
 import dat3.security.entity.Role;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import dat3.security.entity.UserWithRoles;
 import dat3.security.repository.UserWithRolesRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UserWithRolesService {
 
   private  final UserWithRolesRepository userWithRolesRepository;
-  private PasswordEncoder passwordEncoder;
 
-  public UserWithRolesService(UserWithRolesRepository userWithRolesRepository, PasswordEncoder passwordEncoder) {
+  public UserWithRolesService(UserWithRolesRepository userWithRolesRepository) {
     this.userWithRolesRepository = userWithRolesRepository;
-    this.passwordEncoder = passwordEncoder;
   }
 
   public UserWithRolesResponse getUserWithRoles(String id){
@@ -45,7 +42,7 @@ public class UserWithRolesService {
   public UserWithRolesResponse editUserWithRoles(String username , UserWithRolesRequest body){
     UserWithRoles user = userWithRolesRepository.findById(username).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
     user.setEmail(body.getEmail());
-    user.setPassword(passwordEncoder.encode(body.getPassword()));
+    user.setPassword(body.getPassword());
     return new UserWithRolesResponse(userWithRolesRepository.save(user));
   }
 
@@ -62,7 +59,7 @@ public class UserWithRolesService {
     if(userWithRolesRepository.existsByEmail(body.getEmail())){
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"This email is used by another user");
     }
-    String pw = passwordEncoder.encode(body.getPassword());
+    String pw = body.getPassword();
     UserWithRoles userWithRoles = new UserWithRoles(body.getUsername(), pw, body.getEmail());
     if(role !=null  ) {
       userWithRoles.addRole(role);

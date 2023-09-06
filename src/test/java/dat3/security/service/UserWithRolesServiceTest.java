@@ -11,22 +11,15 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 //You can enable/disable these tests in you maven builds via the maven-surefire-plugin, in your pom-file
 @Tag("DisabledSecurityTest")
 @DataJpaTest
-//@Import(PasswordEncoderConfig.class)
 class UserWithRolesServiceTest {
 
-  @Autowired
-  PasswordEncoder passwordEncoder;
-
   UserWithRolesService userWithRolesService;
-
-
 
   @Autowired
   UserWithRolesRepository userWithRolesRepository;
@@ -35,10 +28,10 @@ class UserWithRolesServiceTest {
 
   @BeforeEach
   void setUp() {
-    userWithRolesService = new UserWithRolesService(userWithRolesRepository, passwordEncoder);
+    userWithRolesService = new UserWithRolesService(userWithRolesRepository);
     if(!dataInitialized) {
       userWithRolesRepository.deleteAll();
-      TestUtils.setupTestUsers(passwordEncoder, userWithRolesRepository);
+      TestUtils.setupTestUsers(userWithRolesRepository);
       dataInitialized = true;
     }
   }

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -36,8 +35,6 @@ public class AuthorizationTest {
   MockMvc mockMvc;
   @Autowired
   UserWithRolesRepository userWithRolesRepository;
-  @Autowired
-  PasswordEncoder passwordEncoder;
 
 
   private final ObjectMapper objectMapper = new ObjectMapper();
@@ -56,7 +53,7 @@ public class AuthorizationTest {
 
   @BeforeEach
   void setUp() throws Exception {
-    TestUtils.setupTestUsers(passwordEncoder,userWithRolesRepository);
+    TestUtils.setupTestUsers(userWithRolesRepository);
     if(user_adminJwtToken==null) {
       LoginAndGetTokens();
     }
