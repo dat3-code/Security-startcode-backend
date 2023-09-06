@@ -57,7 +57,6 @@ public class SecurityConfig {
                             .jwt((jwt)-> jwt.decoder(jwtDecoder())
                                     .jwtAuthenticationConverter(authenticationConverter())
                             )
-
             //REF: https://mflash.dev/post/2021/01/19/error-handling-for-spring-security-resource-server/
             .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint())
             .accessDeniedHandler(new CustomOAuth2AccessDeniedHandler()));
