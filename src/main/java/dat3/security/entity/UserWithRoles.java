@@ -31,7 +31,11 @@ import java.util.stream.Collectors;
 @DiscriminatorColumn(name = "DISCRIMINATOR_TYPE")
 public class UserWithRoles implements UserDetails {
 
-
+  /*
+  This is not very elegant since the password encoder is hardcoded, and eventually could end as being different from the one used in the project
+  It's done this way, to make it easier to use this semester, since this class hashes and salts passwords automatically
+  Also it's done like this since YOU CANNOT inject beans into entities
+   */
   @Transient
   private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
