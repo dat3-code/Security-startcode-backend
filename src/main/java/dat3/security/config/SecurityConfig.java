@@ -50,6 +50,9 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())  //We can disable csrf, since we are using token based authentication, not cookie based
             .httpBasic(Customizer.withDefaults())
             .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling((exceptions) -> exceptions
+                    .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint())
+            )
             .oauth2ResourceServer((oauth2ResourceServer) ->
                     oauth2ResourceServer
                             .jwt((jwt)-> jwt.decoder(jwtDecoder())
@@ -57,9 +60,7 @@ public class SecurityConfig {
                             )
 
             //REF: https://mflash.dev/post/2021/01/19/error-handling-for-spring-security-resource-server/
-            .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint())
-            .accessDeniedHandler(new CustomOAuth2AccessDeniedHandler()));
-
+            .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint()));
 
     http.authorizeHttpRequests((authorize) -> authorize
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST,"/api/auth/login")).permitAll()
