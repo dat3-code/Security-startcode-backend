@@ -2,7 +2,6 @@ package dat3.security.config;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.proc.SecurityContext;
-import dat3.security.error.CustomOAuth2AccessDeniedHandler;
 import dat3.security.error.CustomOAuth2AuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +43,7 @@ public class SecurityConfig {
 
   @Autowired
   CorsConfigurationSource corsConfigurationSource;
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
     MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
@@ -52,25 +52,25 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())  //We can disable csrf, since we are using token based authentication, not cookie based
             .httpBasic(Customizer.withDefaults())
             .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling((exceptions) -> exceptions
+                            .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint())
+            )
             .oauth2ResourceServer((oauth2ResourceServer) ->
                     oauth2ResourceServer
-                            .jwt((jwt)-> jwt.decoder(jwtDecoder())
+                            .jwt((jwt) -> jwt.decoder(jwtDecoder())
                                     .jwtAuthenticationConverter(authenticationConverter())
                             )
-            //REF: https://mflash.dev/post/2021/01/19/error-handling-for-spring-security-resource-server/
-            .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint())
-            .accessDeniedHandler(new CustomOAuth2AccessDeniedHandler()));
-
-
+                            //REF: https://mflash.dev/post/2021/01/19/error-handling-for-spring-security-resource-server/
+                            .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint()));
     http.authorizeHttpRequests((authorize) -> authorize
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST,"/api/auth/login")).permitAll()
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST,"/api/user-with-role")).permitAll() //Clients can create a user for themself
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/auth/login")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/user-with-role")).permitAll() //Clients can create a user for themself
 
-             //This is for demo purposes only, and should be removed for a real system
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET,"/api/demo/anonymous")).permitAll()
+            //This is for demo purposes only, and should be removed for a real system
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/demo/anonymous")).permitAll()
 
             //Allow index.html and everything else on root level. So make sure to put ALL your endpoints under /api
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET,"/*")).permitAll()
+            //.requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET,"/*")).permitAll()
 
             .requestMatchers(mvcMatcherBuilder.pattern("/error")).permitAll()
 
@@ -80,7 +80,7 @@ public class SecurityConfig {
             //This is for demo purposes only, and should be removed for a real system
             //.requestMatchers(HttpMethod.GET, "/api/demouser/user-only").hasAuthority("USER")
             // .requestMatchers(HttpMethod.GET, "/api/demouser/admin-only").hasAuthority("ADMIN")
-             .anyRequest().authenticated());
+            .anyRequest().authenticated());
 
     return http.build();
   }
