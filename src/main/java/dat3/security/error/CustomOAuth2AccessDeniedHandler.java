@@ -22,7 +22,8 @@ public class CustomOAuth2AccessDeniedHandler implements AccessDeniedHandler {
   @Override
   public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)
           throws IOException {
-    logger.error(e.getLocalizedMessage(), e);
+    logger.warn(e.getMessage());
+    //logger.warn(e.getMessage(),e);
 
     Map<String, String> parameters = new LinkedHashMap<>();
     String errorMessage = e.getLocalizedMessage();
