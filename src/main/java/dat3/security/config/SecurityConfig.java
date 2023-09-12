@@ -73,12 +73,12 @@ public class SecurityConfig {
 
             .requestMatchers(mvcMatcherBuilder.pattern("/error")).permitAll()
 
-            //Use this to completely disable security (Will not work if endpoints has been marked with @PreAuthorize)
-            //.requestMatchers("/", "/**").permitAll()
-
             //This is for demo purposes only, and should be removed for a real system
-            //.requestMatchers(HttpMethod.GET, "/api/demouser/user-only").hasAuthority("USER")
-            // .requestMatchers(HttpMethod.GET, "/api/demouser/admin-only").hasAuthority("ADMIN")
+            //.requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/test/user-only")).hasAuthority("USER")
+            //.requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/test/admin-only")).hasAuthority("ADMIN")
+
+            //Use this to completely disable security (Will not work if endpoints has been marked with @PreAuthorize)
+            //.requestMatchers(mvcMatcherBuilder.pattern("/**")).permitAll());
             .anyRequest().authenticated());
 
     return http.build();
