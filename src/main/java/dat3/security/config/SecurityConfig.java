@@ -52,15 +52,14 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())  //We can disable csrf, since we are using token based authentication, not cookie based
             .httpBasic(Customizer.withDefaults())
             .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .exceptionHandling((exceptions) -> exceptions
-                            .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint())
-            )
             .oauth2ResourceServer((oauth2ResourceServer) ->
                     oauth2ResourceServer
                             .jwt((jwt) -> jwt.decoder(jwtDecoder())
                                     .jwtAuthenticationConverter(authenticationConverter())
                             )
-                            .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint()));
+                            .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint())
+                            .accessDeniedHandler(new CustomOAuth2AccessDeniedHandler()));
+    
     http.authorizeHttpRequests((authorize) -> authorize
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/auth/login")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/user-with-role")).permitAll() //Clients can create a user for themself
