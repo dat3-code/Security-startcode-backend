@@ -1,6 +1,5 @@
 package dat3.security.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,14 +11,11 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 @Configurable
 @Getter
@@ -31,13 +27,8 @@ import java.util.stream.Collectors;
 @DiscriminatorColumn(name = "DISCRIMINATOR_TYPE")
 public class UserWithRoles implements UserDetails {
 
-  /*
-  This is not very elegant since the password encoder is hardcoded, and eventually could end as being different from the one used in the project
-  It's done this way, to make it easier to use this semester, since this class hashes and salts passwords automatically
-  Also it's done like this since YOU CANNOT inject beans into entities
-   */
   @Transient
-  private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+  static final int PASSWORD_MIN_LENGTH = 60;  // BCrypt encoded passwords always have length 60
 
   @Id
   @Column(nullable = false,length = 50,unique = true)
@@ -58,14 +49,14 @@ public class UserWithRoles implements UserDetails {
   @UpdateTimestamp
   private LocalDateTime edited;
 
-  @Enumerated(EnumType.STRING)
-  @Column(columnDefinition = "ENUM('USER','ADMIN')")
-  @ElementCollection(fetch = FetchType.EAGER)
-  @CollectionTable(name = "security_role")
-  List<Role> roles = new ArrayList<>();
+
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(name = "user_roles",
+          joinColumns = {@JoinColumn(name = "user_username", referencedColumnName = "username")},
+          inverseJoinColumns = {@JoinColumn(name = "role_roleName", referencedColumnName = "roleName")})
+  Set<Role> roles = new HashSet<>();
 
   public UserWithRoles() {}
-
 
   public UserWithRoles(String user, String password, String email){
     this.username = user;
@@ -74,18 +65,21 @@ public class UserWithRoles implements UserDetails {
   }
 
   public void setPassword(String pw){
-    this.password = passwordEncoder.encode(pw);
+    if(pw.length()<60){
+      throw new IllegalArgumentException("Password is not encoded");
+    }
+    this.password = pw;
   }
-
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return roles.stream().map(role -> new SimpleGrantedAuthority(role.toString())).collect(Collectors.toList());
+    return roles.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).toList();
   }
 
   public void addRole(Role roleToAdd) {
     if (!roles.contains(roleToAdd)) {
       roles.add(roleToAdd);
+      roleToAdd.addUser(this);
     }
   }
 

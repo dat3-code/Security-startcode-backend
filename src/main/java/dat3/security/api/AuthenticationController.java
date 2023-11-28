@@ -1,9 +1,9 @@
 package dat3.security.api;
 
-import dat3.security.service.UserDetailsServiceImp;
 import dat3.security.dto.LoginRequest;
 import dat3.security.dto.LoginResponse;
 import dat3.security.entity.UserWithRoles;
+import dat3.security.service.UserDetailsServiceImp;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +12,15 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.jwt.*;
-
+import org.springframework.security.oauth2.jwt.JwsHeader;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
 
@@ -65,9 +66,7 @@ public class AuthenticationController {
               .build();
       JwsHeader jwsHeader = JwsHeader.with(() -> "HS256").build();
       String token = encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
-
-
-      List<String> roles = user.getRoles().stream().map(role -> role.toString()).collect(Collectors.toList());
+      List<String> roles = user.getRoles().stream().map(role -> role.getRoleName()).toList();
       return ResponseEntity.ok()
               .body(new LoginResponse(user.getUsername(), token, roles));
 

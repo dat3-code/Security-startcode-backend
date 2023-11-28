@@ -2,39 +2,51 @@ package dat3.rename_me.configuration;
 
 import dat3.security.entity.Role;
 import dat3.security.entity.UserWithRoles;
+import dat3.security.repository.RoleRepository;
+import dat3.security.repository.UserWithRolesRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
-import dat3.security.repository.UserWithRolesRepository;
+import org.springframework.stereotype.Component;
 
-@Controller
+import java.util.NoSuchElementException;
+
+@Component
+//@DependsOn("setupRoles") //Make sure that the roles are setup before the users
+//@Order(2)
 public class SetupDevUsers implements ApplicationRunner {
 
     UserWithRolesRepository userWithRolesRepository;
-    PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
+    PasswordEncoder pwEncoder;
     String passwordUsedByAll;
 
-    public SetupDevUsers(UserWithRolesRepository userWithRolesRepository, PasswordEncoder passwordEncoder) {
+    public SetupDevUsers(UserWithRolesRepository userWithRolesRepository,RoleRepository roleRepository,PasswordEncoder passwordEncoder) {
         this.userWithRolesRepository = userWithRolesRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
+        this.pwEncoder = passwordEncoder;
         passwordUsedByAll = "test12";
     }
 
-    @Override
     public void run(ApplicationArguments args) {
+        setupAllowedRoles();
         setupUserWithRoleUsers();
+    }
+
+    private void setupAllowedRoles(){
+        roleRepository.save(new Role("USER"));
+        roleRepository.save(new Role("ADMIN"));
     }
 
      /*****************************************************************************************
      IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      NEVER  COMMIT/PUSH CODE WITH DEFAULT CREDENTIALS FOR REAL
      iT'S ONE OF THE TOP SECURITY FLAWS YOU CAN DO
-
      If you see the lines below in log-outputs on Azure, forget whatever had your attention on, AND FIX THIS PROBLEM
-
      *****************************************************************************************/
     private void setupUserWithRoleUsers() {
+        Role roleUser = roleRepository.findById("USER").orElseThrow(()-> new NoSuchElementException("Role 'user' not found"));
+        Role roleAdmin = roleRepository.findById("ADMIN").orElseThrow(()-> new NoSuchElementException("Role 'admin' not found"));
         System.out.println("******************************************************************************");
         System.out.println("********** IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ************");
         System.out.println();
@@ -43,14 +55,14 @@ public class SetupDevUsers implements ApplicationRunner {
         System.out.println("**** ** ON YOUR REMOTE DATABASE                 ******************************");
         System.out.println();
         System.out.println("******************************************************************************");
-        UserWithRoles user1 = new UserWithRoles("user1", passwordUsedByAll, "user1@a.dk");
-        UserWithRoles user2 = new UserWithRoles("user2", passwordUsedByAll, "user2@a.dk");
-        UserWithRoles user3 = new UserWithRoles("user3", passwordUsedByAll, "user3@a.dk");
-        UserWithRoles user4 = new UserWithRoles("user4", passwordUsedByAll, "user4@a.dk");
-        user1.addRole(Role.USER);
-        user1.addRole(Role.ADMIN);
-        user2.addRole(Role.USER);
-        user3.addRole(Role.ADMIN);
+        UserWithRoles user1 = new UserWithRoles("user1", pwEncoder.encode(passwordUsedByAll), "user1@a.dk");
+        UserWithRoles user2 = new UserWithRoles("user2", pwEncoder.encode(passwordUsedByAll), "user2@a.dk");
+        UserWithRoles user3 = new UserWithRoles("user3", pwEncoder.encode(passwordUsedByAll), "user3@a.dk");
+        UserWithRoles user4 = new UserWithRoles("user4", pwEncoder.encode(passwordUsedByAll), "user4@a.dk");
+        user1.addRole(roleUser);
+        user1.addRole(roleAdmin);
+        user2.addRole(roleUser);
+        user3.addRole(roleAdmin);
         userWithRolesRepository.save(user1);
         userWithRolesRepository.save(user2);
         userWithRolesRepository.save(user3);

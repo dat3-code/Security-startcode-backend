@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import dat3.security.TestUtils;
 import dat3.security.dto.LoginRequest;
+import dat3.security.repository.RoleRepository;
 import dat3.security.repository.UserWithRolesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,11 @@ public class AuthenticationTest {
   @Autowired
   UserWithRolesRepository userWithRolesRepository;
 
+  @Autowired
+  RoleRepository roleRepository;
+
+  @Autowired
+  PasswordEncoder pwEncoder;
 
   private final ObjectMapper objectMapper = new ObjectMapper();
   public boolean isDataInitialized = false;
@@ -43,7 +50,7 @@ public class AuthenticationTest {
   void setUp() throws Exception {
     if(!isDataInitialized) {
       isDataInitialized = true;
-      TestUtils.setupTestUsers(userWithRolesRepository);
+      TestUtils.setupTestUsers(userWithRolesRepository,roleRepository,pwEncoder);
     }
   }
 

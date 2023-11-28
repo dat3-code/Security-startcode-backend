@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dat3.security.TestUtils;
 import dat3.security.dto.LoginRequest;
 import dat3.security.dto.LoginResponse;
+import dat3.security.repository.RoleRepository;
 import dat3.security.repository.UserWithRolesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -36,6 +38,11 @@ public class AuthorizationTest {
   @Autowired
   UserWithRolesRepository userWithRolesRepository;
 
+  @Autowired
+  RoleRepository roleRepository;
+
+  @Autowired
+  PasswordEncoder passwordEncoder;
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -53,7 +60,7 @@ public class AuthorizationTest {
 
   @BeforeEach
   void setUp() throws Exception {
-    TestUtils.setupTestUsers(userWithRolesRepository);
+    TestUtils.setupTestUsers(userWithRolesRepository,roleRepository,passwordEncoder);
     if(user_adminJwtToken==null) {
       LoginAndGetTokens();
     }

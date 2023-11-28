@@ -5,8 +5,10 @@ import dat3.security.TestUtils;
 import dat3.security.dto.LoginRequest;
 import dat3.security.dto.LoginResponse;
 import dat3.security.dto.UserWithRolesRequest;
+import dat3.security.repository.RoleRepository;
 import dat3.security.repository.UserWithRolesRepository;
 import dat3.security.service.UserWithRolesService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -40,6 +42,9 @@ class UserWithRoleControllerTest {
   MockMvc mockMvc;
   @Autowired
   UserWithRolesRepository userWithRolesRepository;
+
+  @Autowired
+  RoleRepository roleRepository;
   @Autowired
   UserWithRolesService userWithRolesService;
   @Autowired
@@ -53,14 +58,21 @@ class UserWithRoleControllerTest {
 
   @BeforeEach
   void setUp() throws Exception {
-    userWithRolesService = new UserWithRolesService(userWithRolesRepository);
+//    userWithRolesService = new UserWithRolesService(userWithRolesRepository, roleRepository);
     if (!dataInitialized) {
+      //userWithRolesService = new UserWithRolesService(userWithRolesRepository, roleRepository);
       userWithRolesRepository.deleteAll();
-      TestUtils.setupTestUsers(userWithRolesRepository);
+      TestUtils.setupTestUsers(userWithRolesRepository,roleRepository,passwordEncoder);
       userToken = loginAndGetToken("u2", "secret");
       adminToken = loginAndGetToken("u3", "secret");
       dataInitialized = true;
     }
+    userWithRolesService.setDefaultRoleName("USER"); //can also be done in the TEST application.properties
+  }
+
+  @AfterEach
+  void tearDown() {
+    userWithRolesService.setDefaultRoleName("USER");
   }
 
   String loginAndGetToken(String user, String pw) throws Exception {
@@ -77,7 +89,7 @@ class UserWithRoleControllerTest {
   @Test
   void addUsersWithRolesNoRoles() throws Exception {
     UserWithRolesRequest newUserReq = new UserWithRolesRequest("u100", "secret", "u100@a.dk");
-    UserWithRoleController.DEFAULT_ROLE_TO_ASSIGN = null;
+    userWithRolesService.setDefaultRoleName(null);
     mockMvc.perform(post("/api/user-with-role")
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(newUserReq)))
@@ -90,7 +102,7 @@ class UserWithRoleControllerTest {
   @Test
   void addUsersWithRoles() throws Exception {
     UserWithRolesRequest newUserReq = new UserWithRolesRequest("u100", "secret", "u100@a.dk");
-    //UserWithRoleController.DEFAULT_ROLE_TO_ASSIGN = null;
+    userWithRolesService.setDefaultRoleName("USER");
     mockMvc.perform(post("/api/user-with-role")
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(newUserReq)))
@@ -110,7 +122,7 @@ class UserWithRoleControllerTest {
 
   @Test
   void addRole() throws Exception {
-    mockMvc.perform(patch("/api/user-with-role/add-role/u4/admin")
+    mockMvc.perform(patch("/api/user-with-role/add-role/u4/ADMIN")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
                     .accept("application/json"))
             .andExpect(status().isOk())
@@ -121,7 +133,7 @@ class UserWithRoleControllerTest {
 
   @Test
   void addRoleFailsWithWrongRole() throws Exception {
-    mockMvc.perform(patch("/api/user-with-role/add-role/u2/admin")
+    mockMvc.perform(patch("/api/user-with-role/add-role/u2/ADMIN")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + userToken)
                     .accept("application/json"))
             .andExpect(status().isForbidden());
@@ -129,14 +141,14 @@ class UserWithRoleControllerTest {
 
   @Test
   void removeRoleFailsWhenNotAuthenticatedWithRole() throws Exception {
-    mockMvc.perform(patch("/api/user-with-role/remove-role/u2/user")
+    mockMvc.perform(patch("/api/user-with-role/remove-role/u2/USER")
                     .accept("application/json"))
             .andExpect(status().isUnauthorized());
   }
 
   @Test
   void removeRole() throws Exception {
-    mockMvc.perform(patch("/api/user-with-role/remove-role/u1/user")
+    mockMvc.perform(patch("/api/user-with-role/remove-role/u1/USER")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
                     .accept("application/json"))
             .andExpect(status().isOk())
