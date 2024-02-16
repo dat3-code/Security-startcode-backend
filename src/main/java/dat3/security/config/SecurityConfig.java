@@ -68,8 +68,8 @@ public class SecurityConfig {
             //This is for demo purposes only, and should be removed for a real system
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/demo/anonymous")).permitAll()
 
-            //Allow index.html and everything else on root level. So make sure to put ALL your endpoints under /api
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET,"/*")).permitAll()
+            //Allow index.html for anonymous users
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET,"/index.html")).permitAll()
 
             .requestMatchers(mvcMatcherBuilder.pattern("/error")).permitAll()
 
