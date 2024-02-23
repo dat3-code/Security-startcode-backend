@@ -1,11 +1,11 @@
 # startcode-with-security
 
-[Supplementing Google Doc](https://docs.google.com/document/d/1k5T7rRSrGetjuMdYoErk4ToZTk22QyBpR-x17nmtRos/edit?usp=sharing)
+[Supplementing Google Doc](https://docs.google.com/document/d/1cMF11prwEjrVWFy-f4u2nkp981-inZ2MOiXXgh4gaEc/edit?usp=sharing)
 
-Clone (prefered) or fork the project
+Clone or fork the project
 If cloned delete the hidden .git folder and do a new git init
 
-Se this [short video](https://www.youtube.com/watch?v=aISFmtX-vfA)
+Se this xxxxxxxxxxxxxxx
 for how to use the code for the cars'R' Us project and future projects this semester where you need Security
 
 ### Info

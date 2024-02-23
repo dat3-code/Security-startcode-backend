@@ -5,11 +5,11 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <!-- Use the latest 3.1.x version -->
+        <!-- Use the latest 3.2.x version -->
         <!--This should be safe, since breaking changes should only happen in major releases
         3.0.8 to 3.0.9 however did introduce several breaking changes
-        If this code fails, right after being cloned it was last tested with 3.1.2 -->
-        <version>[3.1.0,3.1.9]</version>
+        If this code fails, right after being cloned it was last tested with 3.2.2 -->
+        <version>[3.2.2,3.2.9]</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <!--Often a reversed company domain name, here you could use something like below -->
@@ -75,6 +75,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -98,7 +105,7 @@
                 <version>2.22.0</version>
                 <configuration>
                     <!-- Comment in or out to disable/enable Security tests from your maven build -->
-                    <!--<excludedGroups>DisabledSecurityTest</excludedGroups>-->
+                    <excludedGroups>DisabledSecurityTest</excludedGroups>
                 </configuration>
             </plugin>
         </plugins>

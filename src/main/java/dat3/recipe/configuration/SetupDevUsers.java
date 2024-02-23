@@ -1,5 +1,4 @@
-package dat3.rename_me.configuration;
-
+package dat3.recipe.configuration;
 import dat3.security.entity.Role;
 import dat3.security.entity.UserWithRoles;
 import dat3.security.repository.RoleRepository;
@@ -12,8 +11,6 @@ import org.springframework.stereotype.Component;
 import java.util.NoSuchElementException;
 
 @Component
-//@DependsOn("setupRoles") //Make sure that the roles are setup before the users
-//@Order(2)
 public class SetupDevUsers implements ApplicationRunner {
 
     UserWithRolesRepository userWithRolesRepository;
@@ -38,7 +35,7 @@ public class SetupDevUsers implements ApplicationRunner {
         roleRepository.save(new Role("ADMIN"));
     }
 
-     /*****************************************************************************************
+    /*****************************************************************************************
      IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      NEVER  COMMIT/PUSH CODE WITH DEFAULT CREDENTIALS FOR REAL
      iT'S ONE OF THE TOP SECURITY FLAWS YOU CAN DO

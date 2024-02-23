@@ -16,16 +16,14 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class UserWithRolesService {
 
-  @Value("${app.default-role}")
+  @Value("${app.default-role:#{null}}")
   private String defaultRoleName;
 
   private final UserWithRolesRepository userWithRolesRepository;
   private final RoleRepository roleRepository;
   private Role roleToAssign;
 
-
   PasswordEncoder passwordEncoder;
-
 
   @PostConstruct
   public void init(){

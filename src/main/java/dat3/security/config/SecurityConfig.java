@@ -1,17 +1,13 @@
 package dat3.security.config;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
-import com.nimbusds.jose.proc.SecurityContext;
 import dat3.security.error.CustomOAuth2AccessDeniedHandler;
 import dat3.security.error.CustomOAuth2AuthenticationEntryPoint;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,7 +22,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import javax.crypto.SecretKey;
@@ -38,20 +33,15 @@ import javax.crypto.spec.SecretKeySpec;
 @Configuration
 public class SecurityConfig {
 
-  //Remove default value below BEFORE deployment
   @Value("${app.secret-key}")
   private String tokenSecret;
-
-  @Autowired
-  CorsConfigurationSource corsConfigurationSource;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
     MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
     http
             .cors(Customizer.withDefaults()) //Will use the CorsConfigurationSource bean declared in CorsConfig.java
-            .csrf(csrf -> csrf.disable())  //We can disable csrf, since we are using token based authentication, not cookie based
-            .httpBasic(Customizer.withDefaults())
+            .csrf(csrf -> csrf.disable())  //We disable csrf, since we are using token based authentication, not cookie based
             .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .oauth2ResourceServer((oauth2ResourceServer) ->
                     oauth2ResourceServer
@@ -69,8 +59,15 @@ public class SecurityConfig {
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/demo/anonymous")).permitAll()
 
             //Allow index.html for anonymous users
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET,"/index.html")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/index.html")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/")).permitAll()
 
+            //Allow for swagger-ui
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/swagger-ui/**")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/swagger-resources/**")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/v3/api-docs/**")).permitAll()
+
+            //Required for error responses
             .requestMatchers(mvcMatcherBuilder.pattern("/error")).permitAll()
 
             //This is for demo purposes only, and should be removed for a real system
@@ -78,8 +75,8 @@ public class SecurityConfig {
             //.requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/test/admin-only")).hasAuthority("ADMIN")
 
             //Use this to completely disable security (Will not work if endpoints has been marked with @PreAuthorize)
-            //.requestMatchers(mvcMatcherBuilder.pattern("/**")).permitAll());
-            .anyRequest().authenticated());
+            .requestMatchers(mvcMatcherBuilder.pattern("/**")).permitAll());
+            //.anyRequest().authenticated());
 
     return http.build();
   }
@@ -100,7 +97,6 @@ public class SecurityConfig {
     return jwtAuthenticationConverter;
   }
 
-  @Bean
   public SecretKey secretKey() {
     return new SecretKeySpec(tokenSecret.getBytes(), "HmacSHA256");
   }
@@ -111,16 +107,8 @@ public class SecurityConfig {
   }
 
   @Bean
-  public JwtEncoder jwtEncoder() {
-    return new NimbusJwtEncoder(
-            new ImmutableSecret<SecurityContext>(secretKey())
-    );
+  public JwtEncoder jwtEncoder() {return new NimbusJwtEncoder(new ImmutableSecret<>(secretKey()));
   }
 
-  @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-          throws Exception {
-    return authenticationConfiguration.getAuthenticationManager();
-  }
 
 }
