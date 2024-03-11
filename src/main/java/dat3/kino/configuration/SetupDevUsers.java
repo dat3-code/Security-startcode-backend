@@ -1,4 +1,4 @@
-package dat3.rename_me.configuration;
+package dat3.kino.configuration;
 
 import dat3.security.entity.Role;
 import dat3.security.entity.UserWithRoles;
